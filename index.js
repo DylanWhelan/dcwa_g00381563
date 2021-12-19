@@ -5,16 +5,18 @@ var bodyParser = require('body-parser')
 
 var app = express()
 
+app.set('view engine', 'ejs')
+
 const {body, validationResult, Result} = require('express-validator')
 
 app.get('/', (req, res) => {
-    res.sendFile(__dirname + "/pages/homepage.html")
+    res.render('showHome')
 })
 
 app.get('/listModules', (req, res) => {
     MySQLhandler.getModules()
     .then((result) => {
-        res.send(result)
+        res.render('showModules', {modules:result})
     })
     .catch((error) => {
         res.send(error)
