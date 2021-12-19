@@ -26,7 +26,35 @@ var getModules = function () {
             reject(error)
         })
     })
-    
 }
 
-module.exports = { getModules}
+var getStudents = function () {
+    return new Promise((resolve, reject) => {
+        pool.query('select * from student')
+        .then((result) => {
+            resolve(result)
+        })
+        .catch((error) => {
+            reject(error)
+        })
+    })
+}
+
+var deleteStudent = function(student_id) {
+    console.log(student_id)
+    return new Promise((resolve, reject) => {
+        var myQuery = {
+            sql: 'delete from student where sid = ?',
+            values: [student_id]
+        }   
+        pool.query(myQuery)
+        .then((result) => {
+            resolve(result)
+        })
+        .catch((error) => {
+            reject(error)
+        })
+    })
+}
+
+module.exports = { getModules, getStudents, deleteStudent}
