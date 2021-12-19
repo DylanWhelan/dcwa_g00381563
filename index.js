@@ -26,7 +26,27 @@ app.get('/listModules', (req, res) => {
 })
 
 app.get('/listStudents', (req, res) => {
-    res.redirect("/")
+    MySQLhandler.getStudents()
+    .then((result) => {
+        res.render('showStudents', {students:result})
+    })
+    .catch((error) => {
+        res.send(error)
+    })
+})
+
+app.get('/listStudents/delete/:sid', (req, res) => {
+    MySQLhandler.deleteStudent(req.params.sid)
+    .then((result) => {
+        res.redirect("/listStudents")
+    })
+    .catch((error) => {
+        console.log(error.errno)
+        if (error.errno == 1451) {
+            res.render('')
+        }
+        res.redirect("/listStudents")
+    })
     console.log(req.path)
 })
 
