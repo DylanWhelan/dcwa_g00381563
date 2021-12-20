@@ -43,9 +43,8 @@ app.get('/listStudents/delete/:sid', (req, res) => {
     .catch((error) => {
         console.log(error.errno)
         if (error.errno == 1451) {
-            res.render('')
+            res.render('deleteError', {student_id:req.params.sid})
         }
-        res.redirect("/listStudents")
     })
     console.log(req.path)
 })

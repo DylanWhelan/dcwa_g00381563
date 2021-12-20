@@ -40,8 +40,23 @@ var getStudents = function () {
     })
 }
 
+var addStudent  = function(student_id, student_Name, student_GPA) {
+    return new Promise((resolve, reject) => {
+        var myQuery = {
+            sql: 'insert into student values (?, ?, ?)',
+            values: [student_id, student_Name, student_GPA]
+        }
+        pool.query(myQuery)
+        .then((result) => {
+            resolve(result)
+        })
+        .catch((error) => {
+            reject(error)
+        })
+    })
+}
+
 var deleteStudent = function(student_id) {
-    console.log(student_id)
     return new Promise((resolve, reject) => {
         var myQuery = {
             sql: 'delete from student where sid = ?',
@@ -57,4 +72,4 @@ var deleteStudent = function(student_id) {
     })
 }
 
-module.exports = { getModules, getStudents, deleteStudent}
+module.exports = { getModules, getStudents, addStudent, deleteStudent}
