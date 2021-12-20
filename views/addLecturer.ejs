@@ -1,0 +1,20 @@
+<h1>Add Lecturer</h1>
+
+<% if (errors != undefined) { %>
+    <ul>
+        <% errors.forEach((error) => { %>
+            <li><%= error.msg %></li>
+        <% }) %>
+    </ul>
+<% } %>
+
+<form action="/addLecturer" method="POST">
+  <label>Lecturer ID:</label><br>
+  <input type="text" name="lecturer_id"><br>
+  <label>Lecturer Name:</label><br>
+  <input type="text" name="lecturer_name"><br>
+  <label>Department:</label><br>
+  <input type="text" name="lecturer_dept"><br>
+  <input type="submit" value="Submit">
+</form>
+<p><a href="/listLecturers"><ul>Back to students list</ul></a></p>

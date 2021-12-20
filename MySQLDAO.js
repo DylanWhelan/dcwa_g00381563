@@ -28,11 +28,28 @@ var getModules = function () {
         })
     })
 }
+
 var getSpecificModule = function (module_id) {
     return new Promise((resolve, reject)=> {
         var myQuery = {
             sql: 'select * from module where mid = ?',
             values: [module_id]
+        }
+        pool.query(myQuery)
+        .then((result) => {
+            resolve(result)
+        })
+        .catch((error) => {
+            reject(error)
+        })
+    })
+}
+
+var updateModule = function (module_id, module_name, module_credits) {
+    return new Promise((resolve, reject) => {
+        var myQuery = {
+            sql: 'update module set name = ?, credits = ? where mid = ?',
+            values: [module_name, module_credits, module_id]
         }
         pool.query(myQuery)
         .then((result) => {
@@ -88,4 +105,4 @@ var deleteStudent = function(student_id) {
     })
 }
 
-module.exports = { getModules, getSpecificModule, getStudents, addStudent, deleteStudent}
+module.exports = { getModules, getSpecificModule, updateModule, getStudents, addStudent, deleteStudent}

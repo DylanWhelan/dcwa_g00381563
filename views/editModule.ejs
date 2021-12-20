@@ -1,34 +1,23 @@
 <h1>Edit Module</h1>
-<% if (module != undefined) { %>
-<form action="/action_page.php">
-  <label for="fname">First name:</label><br>
-  <input type="text" id="fname" name="fname" value="John"><br>
-  <label for="lname">Last name:</label><br>
-  <input type="text" id="lname" name="lname" value="Doe"><br><br>
-  <input type="submit" value="Submit">
-</form> 
-<% } %>
 
-<p>If you click the "Submit" button, the form-data will be sent to a page called "/action_page.php".</p>
-
-
-
-<% if (mySqlError != undefined) { %>
+<% if (errors != undefined) { %>
     <ul>
-        <li><%= mySqlError %></li>
+        <% errors.forEach((error) => { %>
+            <li><%= error.msg %></li>
+        <% }) %>
     </ul>
 <% } %>
 
-<form action="/addStudent" method="POST">
-  <label>Student ID:</label><br>
-  <input type="text" name="student_id"><br>
-  <label>Student Name:</label><br>
-  <input type="text" name="student_name"><br>
-  <label>Grade Point Average:</label><br>
-  <input type="text" name="student_gpa"><br>
+<% if (module != undefined) { %>
+<form action = "/listModules/edit/ + '<%= module.mid%>'"  method="POST">
+  <label>Module ID:</label><br>
+  <input type="text" name="module_id" value=<%= module.mid %> readonly><br>
+  <label>name:</label><br>
+  <input type="text" name="module_name" value=<%= module.name %>><br>
+  <label>Credits:</label><br>
+  <input type="text" name="module_credits" value=<%= module.credits %>><br>
   <input type="submit" value="Submit">
-</form>
-<p><a href="/listStudents"><ul>Back to students list</ul></a></p>
-
-</body>
-</html>
+</form> 
+<% } %>
+<br>
+<p><a href="/"><ul>Home</ul></a></p>

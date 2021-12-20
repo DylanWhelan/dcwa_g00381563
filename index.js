@@ -1,5 +1,6 @@
 var express = require('express')
-var MySQLhandler = require('./MySQLhandler')
+var MySQLDAO = require('./MySQLDAO')
+var mongoDAO = require('./mongoDAO')
 var ejs = require ('ejs')
 var bodyParser = require('body-parser')
 
@@ -16,7 +17,7 @@ app.get('/', (req, res) => {
 })
 
 app.get('/listModules', (req, res) => {
-    MySQLhandler.getModules()
+    MySQLDAO.getModules()
     .then((result) => {
         res.render('showModules', {modules:result})
     })
@@ -26,19 +27,37 @@ app.get('/listModules', (req, res) => {
 })
 
 app.get('/listModules/edit/:mid', (req, res) => {
-    console.log(req.params.mid)
-    MySQLhandler.getSpecificModule(req.params.mid)
+    MySQLDAO.getSpecificModule(req.params.mid)
     .then((result) => {
-        //res.render('editModule', {module: result})
-        res.send(result)
+        let module = result[0]
+        res.render('editModule', {module: module, errors: undefined})
     })
     .catch((error) => {
         res.send(error)
     })
 })
 
+app.post('/listModules/edit/', 
+[check('module_name').isLength({min:5}).withMessage("Module name must be a minimum of 5 characters"),
+check('module_credits').isInt().isIn([5, 10, 15]).withMessage("GPA should be between 0.0 and 4.0")],
+(req, res) => {
+    var errors = validationResult(req)
+    if (!errors.isEmpty()) {
+    }
+    else {
+        MySQLD.updateModule(req.body.module_id, req.body.module_name, req.body.module_credits)
+        .then((result) => {
+            res.redirect("/listModules")
+        })
+        .catch((error) => {
+            console.log(error)
+            res.render('addStudent', {errors: undefined, mySqlError: error.sqlMessage})
+        })
+    }
+})
+
 app.get('/listStudents', (req, res) => {
-    MySQLhandler.getStudents()
+    MySQLDAO.getStudents()
     .then((result) => {
         res.render('showStudents', {students:result})
     })
@@ -48,7 +67,7 @@ app.get('/listStudents', (req, res) => {
 })
 
 app.get('/listStudents/delete/:sid', (req, res) => {
-    MySQLhandler.deleteStudent(req.params.sid)
+    MySQLDAO.deleteStudent(req.params.sid)
     .then((result) => {
         res.redirect("/listStudents")
     })
@@ -75,7 +94,7 @@ check('student_gpa').isFloat({min:0.0, max: 4.0}).withMessage("GPA should be bet
         res.render('addStudent', {errors: errors.errors, mySqlError: undefined})
     }
     else {
-        MySQLhandler.addStudent(req.body.student_id, req.body.student_name, req.body.student_gpa)
+        MySQLDAO.addStudent(req.body.student_id, req.body.student_name, req.body.student_gpa)
         .then((result) => {
             res.redirect("/listStudents")
         })
@@ -87,8 +106,21 @@ check('student_gpa').isFloat({min:0.0, max: 4.0}).withMessage("GPA should be bet
 })
 
 app.get('/listLecturers', (req, res) => {
-    res.redirect("/")
+    mongoDAO.getLecturers()
+    .then((documents) => {
+        res.render('showLecturers', {lecturers: documents})
+    })
+    .catch((error) => {
+        res.send(error)
+    })
 })
+
+app.get('/addLecturer', (req, res) => {
+    res.render('addLecturer', {errors: undefined})
+})
+
+app.post('addLecturer', [check('lecturer_id').isLength({min: 4, max: 4}).withMessage("Please enter a 4 character Lecturer ID:"),
+],)
 
 app.listen(3000, () => {
     console.log("Listening on port 3000")

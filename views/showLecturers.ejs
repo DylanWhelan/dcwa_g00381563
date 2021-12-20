@@ -1,0 +1,17 @@
+<h1>Lecturers</h1><br>
+<button onclick="window.location.href='/addLecturer'">Add Student</button>
+<table>
+    <tr>
+        <th>Lecturer ID</th>
+        <th>Name</th>
+        <th>Dept</th>
+    </tr>
+    <% lecturers.forEach((lecturer) => { %>
+        <tr>
+            <td><%= lecturer._id %></td>
+            <td><%= lecturer.name %></td>
+            <td><%= lecturer.dept %></td>
+        </tr>        
+    <% }) %>
+</table>
+<p><a href="/"><ul>Home</ul></a></p>
