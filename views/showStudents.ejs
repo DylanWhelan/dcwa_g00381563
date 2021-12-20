@@ -1,5 +1,5 @@
 <button onclick="window.location.href='/addStudent'">Add Student</button>
-
+<!-- Creates a dynamic table based on passed in student information-->
 <table>
     <tr>
         <th>Student ID</th>
@@ -12,6 +12,7 @@
             <td><%= student.sid %></td>
             <td><%= student.name %></td>
             <td><%= student.gpa %></td>
+            <!-- String literals are used in the delete button to help ensure the right url is called, and hence the right student is deleted-->
             <td><a href= "<%= `/listStudents/delete/${student.sid}`%>">Delete</a></td>
         </tr>        
     <% }) %>

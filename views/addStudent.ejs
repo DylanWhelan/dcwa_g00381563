@@ -1,5 +1,5 @@
 <h2>Add Student</h2>
-
+<!-- If there were any errors in the express validation they are listed here-->
 <% if (errors != undefined) { %>
     <ul>
         <% errors.forEach((error) => { %>
@@ -8,12 +8,14 @@
     </ul>
 <% } %>
 
+<!-- If there was however a mysql error it is instead listed here-->
 <% if (mySqlError != undefined) { %>
     <ul>
         <li><%= mySqlError %></li>
     </ul>
 <% } %>
 
+<!-- On submission the addStudent post method is called, if successful the user is redirected back to students list-->
 <form action="/addStudent" method="POST">
   <label>Student ID:</label><br>
   <input type="text" name="student_id"><br>

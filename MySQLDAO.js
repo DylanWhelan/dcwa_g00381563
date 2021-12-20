@@ -3,6 +3,7 @@ var mysql = require('promise-mysql')
 
 var pool
 
+// The mysql local server is connected to here and the connection pool is created
 mysql.createPool({
     connectionLimit: 10,
     host: 'localhost',
@@ -17,6 +18,7 @@ mysql.createPool({
         console.log(error)
     })
 
+// All the modules are grabbed from the modules table here to be shown in the show modules table
 var getModules = function () {
     return new Promise((resolve, reject) => {
         pool.query('select * from module')
@@ -29,6 +31,7 @@ var getModules = function () {
     })
 }
 
+// Here a specific module chosen by module_id is returned, to be used in the edit module page
 var getSpecificModule = function (module_id) {
     return new Promise((resolve, reject)=> {
         var myQuery = {
@@ -45,6 +48,7 @@ var getSpecificModule = function (module_id) {
     })
 }
 
+// Here the update query for the module is stored, to be carried out should all validation criteria be satisfied
 var updateModule = function (module_id, module_name, module_credits) {
     return new Promise((resolve, reject) => {
         var myQuery = {
@@ -61,6 +65,7 @@ var updateModule = function (module_id, module_name, module_credits) {
     })
 }
 
+// Here the students are gathered from the student table and passed out to populate the showStudents page
 var getStudents = function () {
     return new Promise((resolve, reject) => {
         pool.query('select * from student')
@@ -73,6 +78,7 @@ var getStudents = function () {
     })
 }
 
+// Should the addStudent criteria be satisfied the information is passed here to an insert query, to be added to the student table
 var addStudent  = function(student_id, student_Name, student_GPA) {
     return new Promise((resolve, reject) => {
         var myQuery = {
@@ -89,6 +95,8 @@ var addStudent  = function(student_id, student_Name, student_GPA) {
     })
 }
 
+// Should the delete link be clicked for a student, this query shall be passed in, and should they have no associated modules they shall be removed from the table
+// Otherwise they shall remain and the user shall be warned that they have associated modules
 var deleteStudent = function(student_id) {
     return new Promise((resolve, reject) => {
         var myQuery = {

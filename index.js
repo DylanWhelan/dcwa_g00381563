@@ -12,10 +12,12 @@ app.set('view engine', 'ejs')
 
 const { body, validationResult, check } = require('express-validator')
 
+// This gets the user the home page
 app.get('/', (req, res) => {
     res.render('showHome')
 })
 
+// This method will display all contained modules
 app.get('/listModules', (req, res) => {
     MySQLDAO.getModules()
         .then((result) => {
@@ -56,9 +58,11 @@ app.post('/listModules/edit/',
         }
     })
 
+// This shows the showStudents page and populates with the sql query
 app.get('/listStudents', (req, res) => {
     MySQLDAO.getStudents()
         .then((result) => {
+            // The result is passed into to populate the dynamic table
             res.render('showStudents', { students: result })
         })
         .catch((error) => {
@@ -66,48 +70,57 @@ app.get('/listStudents', (req, res) => {
         })
 })
 
+// method to delete a student, student is is specified in :sid
 app.get('/listStudents/delete/:sid', (req, res) => {
+    // the delete query is called here with sid passed in
     MySQLDAO.deleteStudent(req.params.sid)
         .then((result) => {
+            // Redirects to student list
             res.redirect("/listStudents")
         })
         .catch((error) => {
-            console.log(error.errno)
-            if (error.errno == 1451) {
-                res.render('deleteError', { student_id: req.params.sid })
-            }
+            // sends the user to error display page, mentioning reasoning and id of student
+            res.render('deleteError', { student_id: req.params.sid })
         })
 })
 
+// This gives the user the addStudent view
 app.get('/addStudent', (req, res) => {
     res.render('addStudent', { errors: undefined, mySqlError: undefined })
 })
 
+
+// This is the addStudent post method
 app.post('/addStudent',
     [check('student_id').isLength({ min: 4, max: 4 }).withMessage("Please enter 4 character student ID"),
     check('student_name').isLength({ min: 5 }).withMessage("Student name must be a minimum of 5 characters"),
     check('student_gpa').isFloat({ min: 0.0, max: 4.0 }).withMessage("GPA should be between 0.0 and 4.0")],
     (req, res) => {
+        // Should the information passed in by the user have failed any of the validation middleware checks, said errors shall be pushed to the array
         var errors = validationResult(req)
-        console.log(errors)
         if (!errors.isEmpty()) {
+            // If there were errors detected, the addStudent view is sent back to the user with errors mentioned
             res.render('addStudent', { errors: errors.errors, mySqlError: undefined })
         }
         else {
             MySQLDAO.addStudent(req.body.student_id, req.body.student_name, req.body.student_gpa)
                 .then((result) => {
+                    // If the student was successfully added, the user is redirected to the listStudents view
                     res.redirect("/listStudents")
                 })
                 .catch((error) => {
-                    console.log(error)
+                    // If there was an error with the sql, the user is sent back to the addStudent view, with errors being detailed on the page
                     res.render('addStudent', { errors: undefined, mySqlError: error.sqlMessage })
                 })
         }
     })
 
+// this is the method to list the lecturers
 app.get('/listLecturers', (req, res) => {
+    // The mongo query is passed in through here to get the lecturers
     mongoDAO.getLecturers()
         .then((documents) => {
+            // The user is then sent the show lecturers page with the lecturers passed in
             res.render('showLecturers', { lecturers: documents })
         })
         .catch((error) => {
@@ -115,15 +128,18 @@ app.get('/listLecturers', (req, res) => {
         })
 })
 
+// This is the method sent to use the user when they click go to add lecturers
 app.get('/addLecturer', (req, res) => {
     res.render('addLecturer', { errors: undefined, deptError: undefined, mongoError: undefined })
 })
 
+// The add lecturer method, is enshrined within
 app.post('/addLecturer',
     [check('lecturer_id').isLength({ min: 4, max: 4 }).withMessage("Lecturer ID must be 4 characters"),
     check('lecturer_name').isLength({ min: 5 }).withMessage("Lecturer name must be a minimum of 5 characters"),
     check('lecturer_dept').isLength({ min: 3, max: 3 }).withMessage("Department must be 3 characters")],
     (req, res) => {
+        // the errors array works the same as for addStudents, same with the !errors.isEmpty
         var errors = validationResult(req)
         if (!errors.isEmpty()) {
             res.render('addLecturer', { errors: errors.errors, deptError: undefined, mongoError: undefined })
@@ -132,19 +148,23 @@ app.post('/addLecturer',
             MySQLDAO.getModules()
                 .then((result) => {
                     var deptIsValid = false
+                    // The dept entered by the user is compared to the module ids stored in the module table
                     result.forEach((module) => {
                         if (req.body.lecturer_dept == module.mid) {
                             deptIsValid = true;
                         }
                     })
+                    // If there was no matching department found, the user is redirected to the addLecturers page again and warned that no such Department existed
                     if (deptIsValid == false) {
                         res.render('addLecturer', { errors: undefined, stringError: "Department does not exist" })
                     }
                     else {
                         mongoDAO.addLecturer(req.body.lecturer_id, req.body.lecturer_name, req.body.lecturer_dept)
                             .then((result) => {
+                                // If there was no error with the mongo insert, the user is redirected to the listLecturers view to see the newly updated table
                                 res.redirect("/listLecturers")
                             }).catch((error) => {
+                                // If there was an error with a duplicate key, the user is sent back to the addLecturer view and is warned
                                 res.render('addLecturer', { errors: undefined, stringError: "duplicate of already existing lecturer id" })
                             })
                     }

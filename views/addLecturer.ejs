@@ -1,5 +1,6 @@
 <h1>Add Lecturer</h1>
 
+<!-- If any express validation errors were encountered they will be shown here-->
 <% if (errors != undefined) { %>
     <ul>
         <% errors.forEach((error) => { %>
@@ -8,12 +9,14 @@
     </ul>
 <% } %>
 
+<!-- Other wise if either an invalid department was entered, or a duplicate id, it shall be shown here-->
 <% if (stringError != undefined) { %>
     <ul>
         <li><%= stringError %></li>
     </ul>
 <% } %>
 
+<!-- form to send information to the addLecturer post method-->
 <form action="/addLecturer" method="POST">
   <label>Lecturer ID:</label><br>
   <input type="text" name="lecturer_id"><br>
