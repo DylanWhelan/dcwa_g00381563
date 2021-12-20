@@ -8,6 +8,12 @@
     </ul>
 <% } %>
 
+<% if (stringError != undefined) { %>
+    <ul>
+        <li><%= stringError %></li>
+    </ul>
+<% } %>
+
 <form action="/addLecturer" method="POST">
   <label>Lecturer ID:</label><br>
   <input type="text" name="lecturer_id"><br>
