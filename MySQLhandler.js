@@ -1,3 +1,4 @@
+const res = require('express/lib/response')
 var mysql = require('promise-mysql')
 
 var pool
@@ -19,6 +20,21 @@ mysql.createPool({
 var getModules = function () {
     return new Promise((resolve, reject) => {
         pool.query('select * from module')
+        .then((result) => {
+            resolve(result)
+        })
+        .catch((error) => {
+            reject(error)
+        })
+    })
+}
+var getSpecificModule = function (module_id) {
+    return new Promise((resolve, reject)=> {
+        var myQuery = {
+            sql: 'select * from module where mid = ?',
+            values: [module_id]
+        }
+        pool.query(myQuery)
         .then((result) => {
             resolve(result)
         })
@@ -72,4 +88,4 @@ var deleteStudent = function(student_id) {
     })
 }
 
-module.exports = { getModules, getStudents, addStudent, deleteStudent}
+module.exports = { getModules, getSpecificModule, getStudents, addStudent, deleteStudent}
