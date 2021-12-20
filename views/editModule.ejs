@@ -8,7 +8,6 @@
     </ul>
 <% } %>
 
-<% if (module != undefined) { %>
 <form action = "/listModules/edit/ + '<%= module.mid%>'"  method="POST">
   <label>Module ID:</label><br>
   <input type="text" name="module_id" value=<%= module.mid %> readonly><br>
