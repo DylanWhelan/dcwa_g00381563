@@ -3,12 +3,13 @@
 <% if (errors != undefined) { %>
     <ul>
         <% errors.forEach((error) => { %>
-            <li><%= error.msg %></li>
+            <li><%= error %></li>
         <% }) %>
     </ul>
 <% } %>
 
-<form action = "/listModules/edit/ + '<%= module.mid%>'"  method="POST">
+<!-- The link for the post method contains the id passed in with the url, ensuring that should any input be incorrect the forms will still be prepopulate the second time the user sees them-->
+<form action = "/listModules/edit/<%= module.mid%>"  method="POST">
   <label>Module ID:</label><br>
   <input type="text" name="module_id" value=<%= module.mid %> readonly><br>
   <label>name:</label><br>
@@ -16,7 +17,6 @@
   <label>Credits:</label><br>
   <input type="text" name="module_credits" value=<%= module.credits %>><br>
   <input type="submit" value="Submit">
-</form> 
-<% } %>
+</form>
 <br>
-<p><a href="/"><ul>Home</ul></a></p>
+<p><a href="/listModules"><ul>Back to modules list</ul></a></p>

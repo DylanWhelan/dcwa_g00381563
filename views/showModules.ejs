@@ -1,10 +1,16 @@
-<h1>Modules</h1><br>
+<style>
+    table, th, td {
+        border: 1px solid black;
+    }
+</style>
+<h1>Modules</h1><br>    
 <table>
     <tr>
         <th>ID</th>
         <th>Name</th>
         <th>Course</th>
         <th>Update</th>
+        <th>Students</th>
     </tr>
     <% modules.forEach((module) => { %>
         <tr>
@@ -12,6 +18,7 @@
             <td><%= module.name %></td>
             <td><%= module.credits %></td>
             <td><a href= "<%= `listModules/edit/${module.mid}`%>">Update</a></td>
+            <td><a href= "<%= `listModules/students/${module.mid}`%>">List</td>
         </tr>        
     <% }) %>
 </table>

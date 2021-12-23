@@ -1,0 +1,21 @@
+<style>
+    table, th, td {
+        border: 1px solid black;
+    }
+</style>
+<!-- Creates a dynamic table based on passed in student information relevant to the module-->
+<table>
+    <tr>
+        <th>Student ID</th>
+        <th>Name</th>
+        <th>GPA</th>
+    </tr>
+    <% students.forEach((student) => { %>
+        <tr>
+            <td><%= student.sid %></td>
+            <td><%= student.name %></td>
+            <td><%= student.gpa %></td>
+        </tr>        
+    <% }) %>
+</table>
+<p><a href="/listModules"><ul>Back to modules list</ul></a></p>

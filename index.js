@@ -7,7 +7,6 @@ var bodyParser = require('body-parser')
 var app = express()
 
 app.use(bodyParser.urlencoded({ extended: false }))
-
 app.set('view engine', 'ejs')
 
 const { body, validationResult, check } = require('express-validator')
@@ -28,7 +27,9 @@ app.get('/listModules', (req, res) => {
         })
 })
 
+// This method will send the user the page to edit a modules information
 app.get('/listModules/edit/:mid', (req, res) => {
+    // This sql query is put in to ensure that the form is pre filled with relevant information
     MySQLDAO.getSpecificModule(req.params.mid)
         .then((result) => {
             let module = result[0]
@@ -39,24 +40,53 @@ app.get('/listModules/edit/:mid', (req, res) => {
         })
 })
 
-app.post('/listModules/edit/',
+// This is the post method for the update module
+app.post('/listModules/edit/:mid',
     [check('module_name').isLength({ min: 5 }).withMessage("Module name must be a minimum of 5 characters"),
-    check('module_credits').isInt().isIn([5, 10, 15]).withMessage("GPA should be between 0.0 and 4.0")],
+    check('module_credits').isIn([5, 10, 15]).withMessage("Credit values must be either 5, 10 or 15")],
     (req, res) => {
+        // Results of the input validation
         var errors = validationResult(req)
+        // If the errors is not empty then errors have occured and hence the user will be asked to fill in the form again
         if (!errors.isEmpty()) {
+            // The sql query is needed again to pre-populate the form for the user.
+            MySQLDAO.getSpecificModule(req.params.mid)
+                .then((result) => {
+                    let module = result[0]
+
+                    // I convert the errors array to a basic string array to simplify the code in the ejs
+                    arrayToPass = []
+                    errors.errors.forEach((error) => arrayToPass.push(error.msg))
+
+                    res.render('editModule', { module: module, errors: arrayToPass })
+                })
+                .catch((error) => {
+                    res.send(error)
+                })
         }
+        // If the inputs were valid the module is updated
         else {
-            MySQLD.updateModule(req.body.module_id, req.body.module_name, req.body.module_credits)
+            MySQLDAO.updateModule(req.body.module_id, req.body.module_name, req.body.module_credits)
                 .then((result) => {
                     res.redirect("/listModules")
                 })
                 .catch((error) => {
-                    console.log(error)
-                    res.render('addStudent', { errors: undefined, mySqlError: error.sqlMessage })
+                    res.send(error)
                 })
         }
     })
+
+// Here is the method which lists the students associated with a module
+app.get('/listModules/students/:mid', (req, res) => {
+    MySQLDAO.getModuleStudents(req.params.mid)
+    .then((result) => {
+        // The result of the query is output to the user
+        res.render('showModuleStudents', { students : result})
+    })
+    .catch((error) => {
+        res.send(error)
+    })
+})
 
 // This shows the showStudents page and populates with the sql query
 app.get('/listStudents', (req, res) => {

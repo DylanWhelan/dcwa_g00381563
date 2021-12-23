@@ -65,6 +65,23 @@ var updateModule = function (module_id, module_name, module_credits) {
     })
 }
 
+// This is the only sql query in the app that draws from two tables, matching the student idea from the student_module table to the students in the student table
+var getModuleStudents = function (module_id) {
+    return new Promise((resolve, reject) => {
+        var myQuery = {
+            sql: 'select s.sid, s.name, s.gpa, sm.mid from student s left join student_module sm on s.sid = sm.sid where sm.mid = ?',
+            values: [module_id]
+        }
+        pool.query(myQuery)
+        .then((result) => {
+            resolve(result)
+        })
+        .catch((error) => {
+            reject(error)
+        })
+    })
+}
+
 // Here the students are gathered from the student table and passed out to populate the showStudents page
 var getStudents = function () {
     return new Promise((resolve, reject) => {
@@ -113,4 +130,4 @@ var deleteStudent = function(student_id) {
     })
 }
 
-module.exports = { getModules, getSpecificModule, updateModule, getStudents, addStudent, deleteStudent}
+module.exports = { getModules, getSpecificModule, getModuleStudents, updateModule, getStudents, addStudent, deleteStudent}
